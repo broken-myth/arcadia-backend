@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  arcadia_23_server:
+    container_name: arcadia_server
+    image: arcadia-23-server
+    build:
+      target: ${APP_ENV}
+    restart: always
+    ports:
+      - ${SERVER_EXTERNAL_PORT}:3000
+    depends_on:
+      - arcadia_23_db
+    volumes:
+      - ./docker_volumes/logs:/app/logs
+      # - .:/app
+      ### To run docker in DEV mode, comment out 1st volume mount and uncomment 2nd volume mount
+
+  arcadia_23_db:
+    container_name: arcadia_db
+    image: mysql:8.0.31
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./docker_volumes/mysql:/var/lib/mysql
+
+  arcadia_23_redis:
+    container_name: arcadia_redis
+    image: redis:7.0
+    restart: always
+    command: redis-server --save 20 1 --loglevel verbose --logfile /var/log/redis/docker_redis.log --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - ./docker_volumes/redis_data:/data
+      - ./docker_volumes/logs:/var/log/redis
+
+  adminer:
+    container_name: arcadia_adminer
+    image: adminer:4.8.1
+    restart: always
+    depends_on:
+        - arcadia_23_db
+    ports:
+        - "${ADMINER_EXTERNAL_PORT}:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: arcadia_23_db
+      ADMINER_PLUGINS: tables-filter
+      ADMINER_DESIGN: hydra

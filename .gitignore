@@ -1,0 +1,11 @@
+*.log
+.env
+config.json
+.vscode
+arcadia_server
+arcadia-backend
+
+docker_volumes/
+mysql_dumps/
+logs/
+

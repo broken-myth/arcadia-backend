@@ -1,0 +1,64 @@
+{
+   "DEV": {
+      "AppEnv": "DEV",
+      "Host": "127.0.0.1",
+      "Port": 3000,
+      "AllowedOrigins": "*",
+      "Log": {
+         "FileName": "./logs/dev_server.log",
+         "Maxsize": 50,
+         "Level": "DEBUG"
+      },
+      "Db": {
+         "Name": "arcadia_23",
+         "Username": "",
+         "Password": "",
+         "Port": 3306,
+         "Host": "127.0.0.1",
+         "LogFile": "./logs/dev_db.log"
+      },
+      "RedisDB": {
+         "Host": "127.0.0.1",
+         "Port": 6379,
+         "Password": "password"
+      },
+      "Auth": {
+         "OAuth2Key": "",
+         "OAuth2Secret": "",
+         "RedirectURL": "http://localhost:8000/public/auth-callback.html",
+         "TokenHourLifeSpan": "5",
+         "JWTSecret": "secret"
+      }
+   },
+   "DOCKER": {
+      "AppEnv": "DOCKER",
+      "Host": "",
+      "Port": 3000,
+      "AllowedOrigins": "*",
+      "Log": {
+         "FileName": "./logs/docker_server.log",
+         "Maxsize": 50,
+         "Level": "INFO"
+      },
+      "Db": {
+         "Name": "arcadia_23",
+         "Username": "root",
+         "Password": "password",
+         "Port": 3306,
+         "Host": "arcadia_23_db",
+         "LogFile": "./logs/docker_db.log"
+      },
+      "RedisDB": {
+         "Host": "arcadia_23_redis",
+         "Port": 6379,
+         "Password": "password"         
+      },
+      "Auth": {
+         "OAuth2Key": "",
+         "OAuth2Secret": "",
+         "RedirectURL": "",
+         "TokenHourLifeSpan": "",
+         "JWTSecret": ""
+      }
+   }
+}

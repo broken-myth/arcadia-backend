@@ -1,0 +1,18 @@
+# Volume mount and dumps
+mysql_dumps/
+docker_volumes/
+logs/
+
+# git stuff
+.git/
+.gitignore
+.githooks/
+.github/
+
+# unnecessary files
+.env.example
+config.json.example
+README.md
+docker-compose.yml
+Dockerfile
+.golangci.yaml
