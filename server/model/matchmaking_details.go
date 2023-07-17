@@ -1,13 +1,14 @@
 package model
 
 import (
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
 type MatchmakingDetails struct {
 	gorm.Model
-	AttackerLineUp string `gorm:"type:text;not null"`
-	DefenderLineUp string `gorm:"type:text;not null"`
+	AttackerLineUp datatypes.JSON `gorm:"not null;"`
+	DefenderLineUp datatypes.JSON `gorm:"not null;"`
 
 	// Relations
 	AttackerID uint `gorm:"not null"`

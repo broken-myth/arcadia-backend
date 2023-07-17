@@ -13,6 +13,10 @@ func matchRouter(superRoute *gin.RouterGroup) {
 	matchRoutes.Use(middleware.Auth)
 	{
 		matchRoutes.GET("/history", controller.GetMatchHistoryGET)
-		matchRoutes.GET("/:id", controller.GetMatchDetailsGET)
+		matchRoutes.GET("/view/:id", controller.ViewSimulationLogGET)
+		matchRoutes.Use(middleware.Arena)
+		{
+			matchRoutes.GET("/start", controller.StartMatchGET)
+		}
 	}
 }

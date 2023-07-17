@@ -8,7 +8,6 @@ import (
 	"github.com/fatih/color"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	gormlogger "gorm.io/gorm/logger"
 )
 
 // Function to Connect to the Database
@@ -30,11 +29,7 @@ func ConnectMySQLdb() {
 
 	var err error
 
-	dblogger := gormlogger.Default.LogMode(gormlogger.Silent)
-
-	if config.AppEnv != "DEV" {
-		dblogger = newDBLogger()
-	}
+	dblogger := newDBLogger()
 
 	// MySQL connection is established
 	db, err = gorm.Open(mysql.Open(connectionString), &gorm.Config{

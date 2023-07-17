@@ -3,7 +3,9 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/delta/arcadia-backend/utils"
+	"github.com/delta/arcadia-backend/config"
+	generalHelper "github.com/delta/arcadia-backend/server/helper/general"
+	userHelper "github.com/delta/arcadia-backend/server/helper/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,17 +14,31 @@ import (
 func Auth(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authorization")
 
-	if authHeader == "" {
-		utils.SendResponse(c, http.StatusUnauthorized, "Authorization header not found")
+	if authHeader == "" || len(authHeader) < 7 {
+		generalHelper.SendError(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
-	userID, err := utils.ValidateToken(authHeader)
-	if err != nil {
-		utils.SendResponse(c, http.StatusUnauthorized, "Unauthorized")
+	var isAdmin = false
+
+	config := config.GetConfig()
+
+	if authHeader == config.Auth.AdminHeader {
+		isAdmin = true
+	}
+
+	userID, err := userHelper.ValidateToken(authHeader)
+
+	if err != nil && !isAdmin {
+		generalHelper.SendError(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
-	c.Set("userID", userID)
+	if !isAdmin {
+		c.Set("userID", userID)
+	} else {
+		c.Set("isAdmin", true)
+	}
+
 	c.Next()
 }

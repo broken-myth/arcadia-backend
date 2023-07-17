@@ -18,6 +18,6 @@ func userRouter(superRoute *gin.RouterGroup) {
 
 		userRoutes.GET("/profile", controller.GetProfileGET)
 
-		userRoutes.POST("/profile", controller.UpdateUserProfilePOST)
+		userRoutes.PATCH("/profile", controller.UpdateUserProfilePATCH)
 	}
 }

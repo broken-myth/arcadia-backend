@@ -8,7 +8,6 @@ import (
 	"github.com/delta/arcadia-backend/utils"
 	"github.com/fatih/color"
 	"github.com/go-redis/redis/v7"
-	"github.com/sirupsen/logrus"
 )
 
 // redis connection object
@@ -20,9 +19,7 @@ func GetRedisDB() *redis.Client {
 }
 
 func ConnectRedisDB() {
-	var l = utils.GetLogger().WithFields(logrus.Fields{
-		"method": "ConnectRedisDB",
-	})
+	var log = utils.GetFunctionLogger("ConnectRedisDB")
 
 	config := config.GetConfig()
 	redisHost := config.RedisDb.Host
@@ -38,10 +35,10 @@ func ConnectRedisDB() {
 
 	// testing connection with redis server
 	if _, err := RedisDB.Ping().Result(); err != nil {
-		l.Error(err)
+		log.Error(err)
 		panic(fmt.Errorf(color.RedString("error connecting with redis db: %+v", err)))
 	} else {
-		l.Info("Redis Database connected!")
+		log.Info("Redis Database connected!")
 		fmt.Println(color.GreenString("Redis Database connected!"))
 	}
 }

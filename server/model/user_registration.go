@@ -12,5 +12,5 @@ type UserRegistration struct {
 	FormFilled bool   `gorm:"default:false;"`
 	Username   string `gorm:"default:null;unique"`
 	College    string `gorm:"default:null;"`
-	Contact    string `gorm:"default:null;unique"`
+	Contact    string `gorm:"default:null;"`
 }

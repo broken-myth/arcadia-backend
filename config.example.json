@@ -4,6 +4,7 @@
       "Host": "127.0.0.1",
       "Port": 3000,
       "AllowedOrigins": "*",
+      "SwaggerURL": "docs",
       "Log": {
          "FileName": "./logs/dev_server.log",
          "Maxsize": 50,
@@ -25,16 +26,19 @@
       "Auth": {
          "OAuth2Key": "",
          "OAuth2Secret": "",
-         "RedirectURL": "http://localhost:8000/public/auth-callback.html",
+         "RedirectURL": "http://localhost:8000/auth-callback.html",
          "TokenHourLifeSpan": "5",
-         "JWTSecret": "secret"
-      }
+         "JWTSecret": "secret",
+         "AdminHeader": ""
+      },
+      "RateLimit":1000
    },
    "DOCKER": {
       "AppEnv": "DOCKER",
-      "Host": "",
+      "Host": "0.0.0.0",
       "Port": 3000,
       "AllowedOrigins": "*",
+      "SwaggerURL": "docs",
       "Log": {
          "FileName": "./logs/docker_server.log",
          "Maxsize": 50,
@@ -56,9 +60,11 @@
       "Auth": {
          "OAuth2Key": "",
          "OAuth2Secret": "",
-         "RedirectURL": "",
-         "TokenHourLifeSpan": "",
-         "JWTSecret": ""
-      }
+         "RedirectURL": "http://localhost:8000/auth-callback.html",
+         "TokenHourLifeSpan": "5",
+         "JWTSecret": "secret",
+         "AdminHeader": ""
+      },
+      "RateLimit":10
    }
 }

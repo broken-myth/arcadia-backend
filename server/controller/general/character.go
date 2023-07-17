@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/delta/arcadia-backend/database"
+	helper "github.com/delta/arcadia-backend/server/helper/general"
 	"github.com/delta/arcadia-backend/server/model"
 	"github.com/delta/arcadia-backend/utils"
 	"github.com/gin-gonic/gin"
@@ -21,26 +22,33 @@ type GetCharactersResponse struct {
 	Characters []Character `json:"characters"`
 }
 
+// GetCharacters godoc
+//
+//	@Summary		Get all Characters
+//	@Description	Get all Characters
+//	@Tags			General
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	controller.GetCharactersResponse	"Success"
+//	@Failure		500	{object}	helper.ErrorResponse				"Internal Server Error"
+//	@Router			/api/characters [get]
 func GetCharactersGET(c *gin.Context) {
-	var characters []model.Character
+	var characters []Character
 
 	db := database.GetDB()
 
-	if err := db.Find(&characters).Error; err != nil {
-		utils.SendResponse(c, http.StatusInternalServerError, "Error while fetching characters")
+	log := utils.GetControllerLogger("/api/characters [GET]")
+
+	if err := db.Model(model.Character{}).Omit("created_at", "updated_at", "deleted_at").
+		Find(&characters).Error; err != nil {
+		log.Errorln(err)
+		helper.SendError(c, http.StatusInternalServerError, "Unable to get characters, Please try again later")
+		return
 	}
 
-	var res GetCharactersResponse
-
-	for _, character := range characters {
-		res.Characters = append(res.Characters, Character{
-			ID:          character.ID,
-			Name:        character.Name,
-			Description: character.Description,
-			ImageURL:    character.ImageURL,
-			AvatarURL:   character.AvatarURL,
-		})
+	res := GetCharactersResponse{
+		Characters: characters,
 	}
 
-	utils.SendResponse(c, http.StatusOK, res)
+	helper.SendResponse(c, http.StatusOK, res)
 }

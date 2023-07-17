@@ -5,6 +5,7 @@ services:
     container_name: arcadia_server
     image: arcadia-23-server
     build:
+      context: .
       target: ${APP_ENV}
     restart: always
     ports:
@@ -34,15 +35,14 @@ services:
       - ./docker_volumes/redis_data:/data
       - ./docker_volumes/logs:/var/log/redis
 
-  adminer:
-    container_name: arcadia_adminer
-    image: adminer:4.8.1
+
+  phpmyadmin:
+    container_name: arcadia_pma
+    image: phpmyadmin:5.2.0
     restart: always
     depends_on:
-        - arcadia_23_db
+      - arcadia_23_db
     ports:
-        - "${ADMINER_EXTERNAL_PORT}:8080"
+      - ${PMA_EXTERNAL_PORT}:80
     environment:
-      ADMINER_DEFAULT_SERVER: arcadia_23_db
-      ADMINER_PLUGINS: tables-filter
-      ADMINER_DESIGN: hydra
+      - PMA_HOST=arcadia_23_db

@@ -13,14 +13,13 @@ type User struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 
 	// User
-	Trophies uint `gorm:"not null;"`
-	XP       uint `gorm:"default:0;"`
+	Username string `gorm:"unique"`
+	Trophies int    `gorm:"not null;"`
+	XP       uint   `gorm:"default:0;"`
 
 	// Relations
 	UserRegistrationID uint             `gorm:"not null;"`
 	UserRegistration   UserRegistration `gorm:"foreignKey:UserRegistrationID;"`
-	ArenaID            uint             `gorm:"default:1;"`
-	Arena              Arena            `gorm:"foreignKey:ArenaID;"`
 	CharacterID        uint             `gorm:"default:1;"`
 	Character          Character        `gorm:"foreignKey:CharacterID;"`
 }

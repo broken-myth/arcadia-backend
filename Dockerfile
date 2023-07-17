@@ -15,7 +15,7 @@ RUN go install github.com/cespare/reflex@latest
 
 COPY . .
 
-ENTRYPOINT ["./scripts/docker-entry.sh"]
+ENTRYPOINT ["/app/scripts/docker-entry.sh"]
 CMD ["make watch"]
 
 # ----------------- DOCKER ------------------ #
@@ -23,7 +23,7 @@ FROM builder as prod_builder
 
 COPY . .
 
-RUN go build -o arcadia_server
+RUN go build -ldflags "-w -s" -o arcadia_server
 
 FROM alpine:3.17 AS DOCKER
 WORKDIR /app
@@ -34,4 +34,4 @@ COPY --from=prod_builder /app/.env .
 COPY --from=prod_builder /app/scripts/docker-entry.sh .
 
 ENTRYPOINT ["/app/docker-entry.sh"]
-CMD ["./arcadia_server"]
+CMD ["/app/arcadia_server"]

@@ -5,7 +5,7 @@ import (
 
 	"github.com/delta/arcadia-backend/database"
 	controller "github.com/delta/arcadia-backend/server/controller/general"
-	helpers "github.com/delta/arcadia-backend/server/helpers/general"
+	helper "github.com/delta/arcadia-backend/server/helper/general"
 	"github.com/fatih/color"
 )
 
@@ -14,13 +14,13 @@ func TestLeaderboard() {
 	redisDB := database.GetRedisDB()
 	redisDB.FlushAll()
 
-	err := helpers.InsertNewUserRedis(1)
+	err := helper.InsertNewUserRedis(1)
 	if err != nil {
 		fmt.Print(color.RedString("Error inserting user"))
 	}
-	_ = helpers.InsertNewUserRedis(2)
-	_ = helpers.InsertNewUserRedis(3)
-	_ = helpers.InsertNewUserRedis(4)
+	_ = helper.InsertNewUserRedis(2)
+	_ = helper.InsertNewUserRedis(3)
+	_ = helper.InsertNewUserRedis(4)
 
 	//
 	//
@@ -33,14 +33,14 @@ func TestLeaderboard() {
 		fmt.Print(color.RedString("Error getting leaderboard"))
 	}
 
-	err = helpers.UpdateUserTrophies(1, 1200)
+	err = helper.UpdateUserTrophies(1, 1200)
 	if err != nil {
 		fmt.Print(color.RedString("Error updating trophies"))
 	}
 
-	_ = helpers.UpdateUserTrophies(3, 700)
-	_ = helpers.UpdateUserTrophies(2, 1700)
-	_ = helpers.UpdateUserTrophies(4, 1100)
+	_ = helper.UpdateUserTrophies(3, 700)
+	_ = helper.UpdateUserTrophies(2, 1700)
+	_ = helper.UpdateUserTrophies(4, 1100)
 
 	ldb, err = controller.GetEntireLeaderboard()
 	fmt.Print(ldb)
@@ -55,8 +55,8 @@ func TestLeaderboard() {
 		fmt.Print(color.RedString("Error getting leaderboard"))
 	}
 	fmt.Print(ldb)
-	fmt.Print("\n")
+	fmt.Print("\n\n\n\n")
 
-	_ = helpers.UpdateRedis()
+	_ = helper.UpdateRedis()
 
 }

@@ -9,5 +9,4 @@ type Character struct {
 	Name        string `gorm:"required;unique"`
 	Description string `gorm:"required;"`
 	ImageURL    string `gorm:"required;"`
-	AvatarURL   string `gorm:"required;"`
 }

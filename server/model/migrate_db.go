@@ -9,17 +9,24 @@ func MigrateDB() {
 
 	for _, model := range []interface{}{
 		// Include models here to auto migrate
+		Constant{},
+		Region{},
+		Character{},
+		MiniconType{},
+		Admin{},
+		Minicon{},
+		Perk{},
+		Target{},
+		Lootbox{},
 		UserRegistration{},
 		User{},
-		Perks{},
-		Minicon{},
-		Arena{},
 		OwnedMinicon{},
+		OwnedPerk{},
 		Lineup{},
-		Constants{},
+		GeneratedLootbox{},
 		MatchmakingDetails{},
+		SimulationDetail{},
 		BattleResult{},
-		Lootbox{},
 	} {
 		if err := db.AutoMigrate(&model); err != nil {
 			panic(err)

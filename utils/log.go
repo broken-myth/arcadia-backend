@@ -1,7 +1,10 @@
 package utils
 
 import (
-	"github.com/delta/arcadia-backend/config"
+	"io"
+	"os"
+
+	config "github.com/delta/arcadia-backend/config"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -34,17 +37,35 @@ func InitLogger() {
 		panic(err)
 	}
 
-	Logger = &logrus.Logger{
-		Out: &lumberjack.Logger{
+	var Out io.Writer
+
+	if config.AppEnv == "DEV" {
+		Out = io.Writer(os.Stdout)
+	} else {
+		Out = &lumberjack.Logger{
 			Filename:   fileName,
 			MaxSize:    maxSize, // in megabytes
 			MaxBackups: 3,
-		},
-		Level: level,
-		Formatter: &logrus.JSONFormatter{
+		}
+	}
+
+	var Formatter logrus.Formatter
+
+	if config.AppEnv == "DEV" {
+		Formatter = &logrus.TextFormatter{
+			DisableTimestamp: true,
+		}
+	} else {
+		Formatter = &logrus.JSONFormatter{
 			// Time stamp in DD-MM-YYYY HH:MM:SS format
 			TimestampFormat: "02-01-2006 15:04:05",
-		},
+		}
+	}
+
+	Logger = &logrus.Logger{
+		Out:       Out,
+		Level:     level,
+		Formatter: Formatter,
 	}
 
 	Logger.Info("Logger started")
@@ -67,4 +88,30 @@ func NewLogger(fileName string) *logrus.Logger {
 			TimestampFormat: "02-01-2006 15:04:05",
 		},
 	}
+}
+
+func GetControllerLogger(controller string) *logrus.Entry {
+	return Logger.WithFields(logrus.Fields{
+		"controller": controller,
+	})
+}
+
+func GetControllerLoggerWithFields(controller string, fields map[string]interface{}) *logrus.Entry {
+	return Logger.WithFields(logrus.Fields{
+		"controller": controller,
+		"param":      fields,
+	})
+}
+
+func GetFunctionLogger(function string) *logrus.Entry {
+	return Logger.WithFields(logrus.Fields{
+		"function": function,
+	})
+}
+
+func GetFunctionLoggerWithFields(function string, fields map[string]interface{}) *logrus.Entry {
+	return Logger.WithFields(logrus.Fields{
+		"function": function,
+		"param":    fields,
+	})
 }

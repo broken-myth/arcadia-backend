@@ -1,0 +1,800 @@
+definitions:
+  controller.Character:
+    properties:
+      avatarUrl:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      imageUrl:
+        type: string
+      name:
+        type: string
+    type: object
+  controller.ConstantsResponse:
+    properties:
+      name:
+        $ref: '#/definitions/model.ConstantType'
+      value:
+        type: integer
+    type: object
+  controller.GetCharactersResponse:
+    properties:
+      characters:
+        items:
+          $ref: '#/definitions/controller.Character'
+        type: array
+    type: object
+  controller.GetLeaderboardResponse:
+    properties:
+      leaderboard:
+        items:
+          $ref: '#/definitions/controller.LeaderboardRow'
+        type: array
+      pages:
+        type: integer
+    type: object
+  controller.GetMiniconResponse:
+    properties:
+      attack:
+        type: integer
+      description:
+        type: string
+      health:
+        type: integer
+      imgLink:
+        type: string
+      name:
+        type: string
+      perks:
+        items:
+          $ref: '#/definitions/controller.PerkData'
+        type: array
+      type:
+        type: string
+    type: object
+  controller.GetMiniconsResponse:
+    properties:
+      lineup:
+        items:
+          $ref: '#/definitions/controller.UnlockedMiniconsResponse'
+        type: array
+      locked:
+        items:
+          $ref: '#/definitions/controller.LockedMiniconsResponse'
+        type: array
+      unlocked:
+        items:
+          $ref: '#/definitions/controller.UnlockedMiniconsResponse'
+        type: array
+    type: object
+  controller.LeaderboardRow:
+    properties:
+      avatarUrl:
+        type: string
+      rank:
+        type: integer
+      trophies:
+        type: integer
+      userId:
+        type: integer
+      username:
+        type: string
+      xp:
+        type: integer
+    type: object
+  controller.LockedMiniconsResponse:
+    properties:
+      miniconID:
+        type: integer
+      name:
+        type: string
+    type: object
+  controller.Lootbox:
+    properties:
+      isOpen:
+        description: Is the lootbox open?
+        type: boolean
+      lootboxID:
+        type: integer
+      region:
+        type: string
+      x:
+        description: Encrypted X coordinate of the lootbox
+        type: string
+      "y":
+        description: Encrypted Y coordinate of the lootbox
+        type: string
+    type: object
+  controller.LootboxGETResponse:
+    properties:
+      lootboxes:
+        items:
+          $ref: '#/definitions/controller.Lootbox'
+        type: array
+    type: object
+  controller.LootboxOpenPOSTResponse:
+    properties:
+      lootboxID:
+        type: integer
+      unlocked:
+        $ref: '#/definitions/controller.Unlocked'
+    type: object
+  controller.MatchDetailsResponse:
+    properties:
+      matchID:
+        type: integer
+      matchType:
+        type: string
+      opponentAvatarURL:
+        type: string
+      opponentUsername:
+        description: Attacker Details
+        type: string
+      trophyChange:
+        type: integer
+    type: object
+  controller.OpponentDetails:
+    properties:
+      characterURL:
+        type: string
+      trophies:
+        type: integer
+      username:
+        type: string
+      xp:
+        type: integer
+    type: object
+  controller.PerkData:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      perkValue:
+        type: integer
+    type: object
+  controller.StartMatchResponse:
+    properties:
+      matchId:
+        type: integer
+      opponent:
+        $ref: '#/definitions/controller.OpponentDetails'
+    type: object
+  controller.Unlocked:
+    properties:
+      description:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+    type: object
+  controller.UnlockedMiniconsResponse:
+    properties:
+      imageLink:
+        type: string
+      miniconID:
+        type: integer
+      name:
+        type: string
+      ownedMiniconID:
+        type: integer
+      type:
+        type: string
+      xp:
+        type: integer
+    type: object
+  controller.UpdateLineupRequest:
+    properties:
+      lineupIDArr:
+        items:
+          type: integer
+        type: array
+    required:
+    - lineupIDArr
+    type: object
+  controller.UpdateLineupResponse:
+    properties:
+      miniconID:
+        type: integer
+    type: object
+  controller.UpdateProfileResponse:
+    properties:
+      intendedUpdate:
+        type: string
+      newValue:
+        type: string
+    type: object
+  helper.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  model.ConstantType:
+    enum:
+    - minicons_in_lineup
+    - matchmaking_rank_range
+    - min_trophy_gain
+    - trophy_gain_range
+    - trophy_diff_loser
+    - survivor_trophy_range
+    - default_trophy_count
+    - successive_duplicate_match_limit
+    - daily_attack_limit
+    - incr_xp_minicon
+    - incr_xp_user
+    - xp_level_multiplier
+    - xp_base_count
+    - level_up_stat_multiplier_numerator
+    - level_up_stat_multiplier_denominator
+    - is_arena_open
+    - max_minicon_level
+    - max_unlocked_minicons
+    - type_multiplier_numerator
+    - type_multiplier_denominator
+    type: string
+    x-enum-varnames:
+    - MiniconsInLineup
+    - MatchmakingRankRange
+    - MinTrophyGain
+    - TrophyGainRange
+    - TrophyDiffLoser
+    - SurvivorTrophyRange
+    - DefaultTrophyCount
+    - SuccessiveDuplicateMatchLimit
+    - DailyAttackLimit
+    - IncrXpMinicon
+    - IncrXpUser
+    - XpLevelMultiplier
+    - XpBaseCount
+    - LevelUpStatMultiplierNumerator
+    - LevelUpStatMultiplierDenominator
+    - IsArenaOpen
+    - MaxMiniconLevel
+    - MaxUnlockedMinicons
+    - TypeMultiplierNumerator
+    - TypeMultiplierDenominator
+info:
+  contact: {}
+  description: This is the API documentation for Arcadia Backend
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Arcadia API
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: Checks if the server is up and running
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.LootboxOpenPOSTResponse'
+      summary: Ping
+      tags:
+      - General
+  /api/admin/constants:
+    get:
+      description: Get all Constants
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controller.ConstantsResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all Constants
+      tags:
+      - Admin
+    patch:
+      description: Update a constant
+      parameters:
+      - description: Name of the constant
+        enum:
+        - minicons_in_lineup
+        - matchmaking_rank_range
+        - min_trophy_gain
+        - trophy_gain_range
+        - trophy_diff_loser
+        - survivor_trophy_range
+        - default_trophy_count
+        - successive_duplicate_match_limit
+        - daily_attack_limit
+        - incr_xp_minicon
+        - incr_xp_user
+        - xp_level_multiplier
+        - xp_base_count
+        - level_up_stat_multiplier_numerator
+        - level_up_stat_multiplier_denominator
+        - is_arena_open
+        - max_minicon_level
+        - max_unlocked_minicons
+        - type_multiplier_numerator
+        - type_multiplier_denominator
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: New value of the constant
+        in: formData
+        name: newValue
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "400":
+          description: Error in updating constants
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a constant
+      tags:
+      - Admin
+  /api/admin/login:
+    post:
+      description: Admin Login
+      parameters:
+      - description: Username of the admin
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password of the admin
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "400":
+          description: Error in updating constants
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      summary: Admin Login
+      tags:
+      - Admin
+  /api/admin/update_leaderboard:
+    patch:
+      description: Update Leaderboard
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated Successfully
+          schema:
+            type: string
+        "400":
+          description: Error in updating constants
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Leaderboard
+      tags:
+      - Admin
+  /api/admin/verify:
+    get:
+      description: Checks if the admin is logged in
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Admin Verify
+      tags:
+      - Admin
+  /api/characters:
+    get:
+      consumes:
+      - application/json
+      description: Get all Characters
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.GetCharactersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      summary: Get all Characters
+      tags:
+      - General
+  /api/error:
+    post:
+      description: Log Client Side Error
+      parameters:
+      - description: Client Side Error message
+        in: formData
+        name: message
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "400":
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Log Client Side Error
+      tags:
+      - General
+  /api/leaderboard/{page}:
+    get:
+      consumes:
+      - application/json
+      description: Get Leaderboard
+      parameters:
+      - description: Page number
+        in: path
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.GetLeaderboardResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      summary: Get Leaderboard
+      tags:
+      - General
+  /api/lootbox:
+    get:
+      description: Get all lootboxes of the user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.LootboxGETResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Lootboxes
+      tags:
+      - General
+  /api/lootbox/open:
+    post:
+      description: Open a lootbox
+      parameters:
+      - description: Player's Tile X coordinate
+        in: formData
+        name: x
+        required: true
+        type: integer
+      - description: Player's Tile Y coordinate
+        in: formData
+        name: "y"
+        required: true
+        type: integer
+      - description: Lootbox ID
+        in: formData
+        name: lootboxID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.LootboxOpenPOSTResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "403":
+          description: Minicon Limit Reached
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "409":
+          description: Lootbox already opened
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "418":
+          description: LOL, Nice Try
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Open Lootbox
+      tags:
+      - General
+  /api/match/history:
+    get:
+      description: Get History of Matches
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/controller.MatchDetailsResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get History of Matches
+      tags:
+      - Match
+  /api/match/start:
+    get:
+      description: Start a Match
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.StartMatchResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "403":
+          description: Daily Attack Limit Reached (OR) Lineup not set (OR) Arena closed
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Start a Match
+      tags:
+      - Match
+  /api/minicon:
+    get:
+      description: Get All Minicons
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.GetMiniconsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Minicons
+      tags:
+      - Minicon
+  /api/minicon/:id:
+    get:
+      description: Get details of a minicon
+      parameters:
+      - description: Minicon Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.GetMiniconResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "403":
+          description: Not Owned or Doesn't Exist
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Minicon Details
+      tags:
+      - Minicon
+  /api/minicon/updateLineup:
+    patch:
+      description: Update Minicon Lineup
+      parameters:
+      - description: Lineup ID Array
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/controller.UpdateLineupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.UpdateLineupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Minicon Lineup
+      tags:
+      - Minicon
+  /user/profile:
+    get:
+      description: Gets user profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.UpdateProfileResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "403":
+          description: User not found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user profile
+      tags:
+      - User
+  /user/profile/update:
+    patch:
+      description: Updates user profile
+      parameters:
+      - description: Intended update
+        enum:
+        - name
+        - college
+        - contact
+        - character
+        in: formData
+        name: intendedUpdate
+        required: true
+        type: string
+      - description: New value
+        in: formData
+        name: newValue
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/controller.UpdateProfileResponse'
+        "400":
+          description: Bad Request or Invalid intended update
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "403":
+          description: User not found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update user profile
+      tags:
+      - User
+securityDefinitions:
+  ApiKeyAuth:
+    description: Authorization token
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

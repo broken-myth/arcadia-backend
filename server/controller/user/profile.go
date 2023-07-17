@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/delta/arcadia-backend/database"
-	helpers "github.com/delta/arcadia-backend/server/helpers/general"
+	helper "github.com/delta/arcadia-backend/server/helper/general"
 	"github.com/delta/arcadia-backend/server/model"
 	"github.com/delta/arcadia-backend/utils"
 	"github.com/gin-gonic/gin"
@@ -18,25 +18,48 @@ type GetProfileResponse struct {
 	Email            string `json:"email"`
 	College          string `json:"college"`
 	Contact          string `json:"contact"`
-	Trophies         uint   `json:"trophies"`
+	Trophies         int    `json:"trophies"`
 	XP               uint   `json:"xp"`
 	NumberOfMinicons int64  `json:"numberOfMinicons"`
-	CharacterID      uint   `json:"characterId"`
+	CharacterURL     string `json:"characterURL"`
 	AvatarURL        string `json:"avatarUrl"`
 	Rank             uint   `json:"rank"`
 }
 
 type UpdateProfileRequest struct {
-	IntendedUpdate string `json:"intendedUpdate" binding:"required"`
-	NewValue       string `json:"newValue" binding:"required"`
+	IntendedUpdate string `json:"intendedUpdate" form:"intendedUpdate" binding:"required"`
+	NewValue       string `json:"newValue" form:"newValue" binding:"required"`
 }
 
 type UpdateProfileResponse struct {
 	IntendedUpdate string `json:"intendedUpdate"`
-	NewValue       string `json:"newValue"`
-	AvatarURL      string `json:"avatarUrl"` // Empty if not Intended update is not character
+	UpdatedValue   string `json:"newValue"`
 }
 
+type IntendedUpdateType string
+
+const (
+	Name      IntendedUpdateType = "name"
+	College   IntendedUpdateType = "college"
+	Contact   IntendedUpdateType = "contact"
+	Character IntendedUpdateType = "character"
+)
+
+// GetProfile godoc
+//
+//	@Summary		Get user profile
+//	@Description	Gets user profile
+//	@Tags			User
+//	@Produce		json
+//	@Success		200	{object}	UpdateProfileResponse	"Success"
+//	@Failure		401	{object}	helper.ErrorResponse	"Unauthorized"
+//
+//	@Failure		403	{object}	helper.ErrorResponse	"User not found"
+//
+//	@Failure		500	{object}	helper.ErrorResponse	"Internal Server Error"
+//	@Router			/user/profile [GET]
+//
+//	@Security		ApiKeyAuth
 func GetProfileGET(c *gin.Context) {
 	userID := c.GetUint("userID")
 
@@ -44,26 +67,33 @@ func GetProfileGET(c *gin.Context) {
 
 	var user model.User
 
+	log := utils.GetControllerLogger("/user/profile [GET]")
+
 	if err := db.Preload("UserRegistration").Preload("Character").First(&user, userID).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			utils.SendResponse(c, http.StatusBadRequest, "User not found")
+			log.Error("User not found:", err)
+			helper.SendError(c, http.StatusForbidden, "User not found")
 		} else {
-			utils.SendResponse(c, http.StatusInternalServerError, "Error in getting user profile")
+			log.Error("Error in getting user profile:", err)
+			helper.SendError(c, http.StatusInternalServerError, "Error in getting user profile")
 		}
+		return
 	}
 
 	var ownedMinicons model.OwnedMinicon
 	var numOfMinicons int64
 
 	if err := db.Model(&ownedMinicons).Where("owner_id = ?", userID).Count(&numOfMinicons).Error; err != nil {
-		utils.SendResponse(c, http.StatusInternalServerError, "Error in getting user profile")
+		log.Error("Error in getting owned minicons:", err)
+		helper.SendError(c, http.StatusInternalServerError, "Error in getting user profile")
 		return
 	}
 
-	rank, err := helpers.GetUserRank(user.ID)
+	rank, err := helper.GetUserRank(user.ID)
 
 	if err != nil {
-		utils.SendResponse(c, http.StatusInternalServerError, "Error in getting user profile")
+		log.Error("Error in getting user rank:", err)
+		helper.SendError(c, http.StatusInternalServerError, "Error in getting user profile")
 		return
 	}
 
@@ -76,21 +106,41 @@ func GetProfileGET(c *gin.Context) {
 		Trophies:         user.Trophies,
 		XP:               user.XP,
 		NumberOfMinicons: numOfMinicons,
-		CharacterID:      user.Character.ID,
-		AvatarURL:        user.Character.AvatarURL,
+		CharacterURL:     user.Character.ImageURL,
 		Rank:             rank,
 	}
 
-	utils.SendResponse(c, http.StatusOK, res)
+	helper.SendResponse(c, http.StatusOK, res)
 }
 
-func UpdateUserProfilePOST(c *gin.Context) {
+// UpdateProfile godoc
+//
+//	@Summary		Update user profile
+//	@Description	Updates user profile
+//	@Tags			User
+//	@Produce		json
+//	@Param			intendedUpdate	formData	IntendedUpdateType		true	"Intended update"
+//	@Param			newValue		formData	string					true	"New value"
+//	@Success		200				{object}	UpdateProfileResponse	"Success"
+//	@Failure		400				{object}	helper.ErrorResponse	"Bad Request or Invalid intended update"
+//	@Failure		401				{object}	helper.ErrorResponse	"Unauthorized"
+//
+//	@Failure		403				{object}	helper.ErrorResponse	"User not found"
+//
+//	@Failure		500				{object}	helper.ErrorResponse	"Internal Server Error"
+//	@Router			/user/profile/update [PATCH]
+//
+//	@Security		ApiKeyAuth
+func UpdateUserProfilePATCH(c *gin.Context) {
 	userID := c.GetUint("userID")
 
 	var req UpdateProfileRequest
 
-	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.SendResponse(c, http.StatusBadRequest, "Error")
+	log := utils.GetControllerLogger("/user/profile/update [PATCH]")
+
+	if err := c.Bind(&req); err != nil {
+		log.Error("Binding Error:", err)
+		helper.SendError(c, http.StatusBadRequest, "Error")
 		return
 	}
 
@@ -100,9 +150,11 @@ func UpdateUserProfilePOST(c *gin.Context) {
 
 	if err := db.Preload("UserRegistration").First(&user, userID).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			utils.SendResponse(c, http.StatusBadRequest, "User not found")
+			log.Error("User not found:", err)
+			helper.SendError(c, http.StatusForbidden, "User not found")
 		} else {
-			utils.SendResponse(c, http.StatusInternalServerError, "Error in updating user profile")
+			log.Error("Error in updating user profile:", err)
+			helper.SendError(c, http.StatusInternalServerError, "Error in updating user profile")
 		}
 	}
 
@@ -116,7 +168,8 @@ func UpdateUserProfilePOST(c *gin.Context) {
 	case "character":
 		parsedCharID, err := strconv.ParseUint(req.NewValue, 10, 32)
 		if err != nil {
-			utils.SendResponse(c, http.StatusBadRequest, "Invalid intended update")
+			log.Error("Invalid intended update:", err)
+			helper.SendError(c, http.StatusBadRequest, "Invalid intended update")
 			return
 		}
 
@@ -124,15 +177,17 @@ func UpdateUserProfilePOST(c *gin.Context) {
 
 		if err := db.First(&model.Character{}, characterID).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
-				utils.SendResponse(c, http.StatusBadRequest, "Invalid CharacterID")
+				log.Error("Invalid CharacterID:", err)
+				helper.SendError(c, http.StatusBadRequest, "Invalid CharacterID")
 			} else {
-				utils.SendResponse(c, http.StatusInternalServerError, "Error in updating user profile")
+				log.Error("Error in getting character:", err)
+				helper.SendError(c, http.StatusInternalServerError, "Error in updating user profile")
 			}
 		}
 
 		user.CharacterID = characterID
 	default:
-		utils.SendResponse(c, http.StatusBadRequest, "Invalid intended update")
+		helper.SendError(c, http.StatusBadRequest, "Invalid intended update")
 		return
 	}
 
@@ -141,36 +196,38 @@ func UpdateUserProfilePOST(c *gin.Context) {
 	if req.IntendedUpdate == "character" {
 		// update User Table
 		if err := db.Save(&user).Error; err != nil {
-			utils.SendResponse(c, http.StatusInternalServerError, "Error in updating user profile")
+			log.Error("Error in updating user profile:", err)
+			helper.SendError(c, http.StatusInternalServerError, "Error in updating user profile")
 			return
 		}
 
 		var url string
 
-		if err := db.Model(&user.Character).Select("avatar_url").
+		if err := db.Model(&user.Character).Select("image_url").
 			Where("id = ?", user.CharacterID).Scan(&url).Error; err != nil {
-			utils.SendResponse(c, http.StatusInternalServerError, "Error in updating user profile")
+			log.Error("Error in getting avatar_url:", err)
+			helper.SendError(c, http.StatusInternalServerError, "Error in updating user profile")
 			return
 		}
 
 		res = UpdateProfileResponse{
 			IntendedUpdate: req.IntendedUpdate,
-			NewValue:       req.NewValue,
-			AvatarURL:      url,
+			UpdatedValue:   url,
 		}
 
 	} else {
 		// update UserRegistration Table
 		if err := db.Save(&user.UserRegistration).Error; err != nil {
-			utils.SendResponse(c, http.StatusInternalServerError, "Error in updating user profile")
+			log.Error("Error in updating user_registration:", err)
+			helper.SendError(c, http.StatusInternalServerError, "Error in updating user profile")
 			return
 		}
 
 		res = UpdateProfileResponse{
 			IntendedUpdate: req.IntendedUpdate,
-			NewValue:       req.NewValue,
+			UpdatedValue:   req.NewValue,
 		}
 	}
 
-	utils.SendResponse(c, http.StatusOK, res)
+	helper.SendResponse(c, http.StatusOK, res)
 }

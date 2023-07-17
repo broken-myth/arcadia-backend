@@ -39,6 +39,9 @@ type AuthConfig struct {
 	// JWT
 	JWTSecret         string
 	TokenHourLifeSpan string
+
+	// Admin
+	AdminHeader string
 }
 
 type Config struct {
@@ -52,6 +55,9 @@ type Config struct {
 	//Allowed Origins
 	AllowedOrigins string
 
+	// OpenAPI docs URL
+	SwaggerURL string
+
 	// Logger Config
 	Log LoggerConfig
 
@@ -62,6 +68,9 @@ type Config struct {
 
 	// Auth Config
 	Auth AuthConfig
+
+	// Rate limit Config
+	Ratelimit uint
 }
 
 // All configurations

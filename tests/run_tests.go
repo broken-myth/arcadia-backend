@@ -5,8 +5,9 @@ import (
 
 	"github.com/delta/arcadia-backend/config"
 	"github.com/delta/arcadia-backend/database"
-	helpers "github.com/delta/arcadia-backend/server/helpers/general"
+	helper "github.com/delta/arcadia-backend/server/helper/general"
 	"github.com/delta/arcadia-backend/server/model"
+
 	tests "github.com/delta/arcadia-backend/tests/test_functions"
 	"github.com/delta/arcadia-backend/utils"
 )
@@ -18,14 +19,15 @@ func main() {
 	database.ConnectMySQLdb()
 	database.ConnectRedisDB()
 	model.MigrateDB()
-	err := helpers.InitConstants()
+	err := helper.InitConstants()
 	if err != nil {
 		fmt.Printf("Error Initializing Constants = %v", err)
 	}
 
-	fmt.Print("Running Tests: \n")
+	fmt.Print("\n Running Tests: \n")
 
+	tests.TestMatchPipeline()
 	tests.TestTrophyGain()
 	tests.TestLeaderboard()
-
+	tests.TestUpdateXpLevels()
 }
